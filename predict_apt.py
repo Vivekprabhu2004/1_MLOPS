@@ -7,8 +7,10 @@ X, y = load_iris(return_X_y=True)
 model = LogisticRegression(max_iter=200).fit(X, y)
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.json['features']
-    prediction = model.predict([data])
-    return jsonify({'prediction': int(prediction[0])})
-if __name__ == '__main__':
-    app.run(debug=True)
+    try:
+        data = request.json['features']
+        prediction = model.predict([data])
+        return jsonify({'prediction': int(prediction[0])})
+    except (KeyError, TypeError, ValueError):
+        return jsonify({'error': 'Invalid input'}), 400
+
